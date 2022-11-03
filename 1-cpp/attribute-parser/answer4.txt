@@ -1,0 +1,15 @@
+                    Mine         Correct
+tag1~v1             123          123
+tag1~v2             43.4         43.4
+tag1~v3             hello        hello
+tag4~v2             43.4         Not Found!
+tag2.tag4~v1        Hello        Hello
+tag2.tag4~v2        World!       Universe!
+tag2.tag3~v2        World!       World!
+tag5.tag7~new_val   New          New
+tag5~new_val        Not Found!   Not Found!
+tag7~new_val        Not Found!   Not Found!
+tag6.tag8~intval    34           34
+tag6.tag8~floatval  9.845        9.845
+tag6.tag8~val       34           Not Found!
+tag8~intval         Not Found!   Not Found!

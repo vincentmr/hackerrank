@@ -31,7 +31,7 @@ void query_tag_simple(vector<string> attrs, string query)
 {
    int found{};
    string tag, attr;
-
+   int level{0};
    found = query.find("~");
    if (found != std::string::npos)
    {
@@ -40,9 +40,26 @@ void query_tag_simple(vector<string> attrs, string query)
    }
    for (int i = 0; i < attrs.size(); i++)
    {
+
+      found = attrs[i].find("</");
+      if (found != std::string::npos)
+      {
+         level += 1;
+      }
+      else
+      {
+         level -= 1;
+      }
+      // cout << level << '\n';
+
       found = attrs[i].find(tag);
       if (found != std::string::npos)
       {
+         if (level != 1)
+         {
+            cout << "Not Found!\n";
+            return;
+         }
          get_attr_simple(attrs[i], attr);
          return;
       }
@@ -54,46 +71,44 @@ void query_tag(vector<string> attrs, string query)
    if (query.find(".") == std::string::npos)
    {
       query_tag_simple(attrs, query);
-      // int found{};
-      // string tag, attr;
-
-      // found = query.find("~");
-      // if (found != std::string::npos)
-      // {
-      //    tag = query.substr(0, found - 1);
-      //    attr = query.substr(found + 1, query.size() - 1);
-      // }
-      // for (int i = 0; i < attrs.size(); i++)
-      // {
-      //    found = attrs[i].find(tag);
-      //    if (found != std::string::npos)
-      //    {
-      //       get_attr_simple(attrs[i], attr);
-      //       return;
-      //    }
-      // }
    }
    else
    {
       int i, j;
       int lb, ub;
       int found{};
+      int level{0};
       string maintag;
 
-      cout << query << '\n';
       found = query.find(".");
-      maintag = query.substr(0, found - 1);
+      maintag = query.substr(0, found);
+      // cout << maintag << endl;
       for (int i = 0; i < attrs.size(); i++)
       {
+         found = attrs[i].find("</");
+         if (found != std::string::npos)
+         {
+            level += 1;
+         }
+         else
+         {
+            level -= 1;
+         }
+         // cout << level << '\n';
          found = attrs[i].find(maintag);
          if (found != std::string::npos)
          {
+            if (level != 1)
+            {
+               cout << "Not Found!\n";
+               return;
+            }
             lb = i;
             break;
          }
       }
       maintag = "/" + maintag;
-      for (int i = 0; i < attrs.size(); i++)
+      for (int i = lb + 1; i < attrs.size(); i++)
       {
          found = attrs[i].find(maintag);
          if (found != std::string::npos)
@@ -102,8 +117,10 @@ void query_tag(vector<string> attrs, string query)
             break;
          }
       }
-      vector<string> subattrs(&attrs[lb], &attrs[ub + 1]);
-      query_tag(subattrs, query);
+      vector<string> subattrs(&attrs[lb + 1], &attrs[ub - 1]);
+      found = query.find(".");
+      query_tag(subattrs, query.substr(found + 1, query.size() - 1));
+      return;
    }
    return;
 }
@@ -180,23 +197,14 @@ int main()
    n = stoi(nq[0]);
    q = stoi(nq[1]);
 
-   // cin >> n >> q;
-   // cout << n << " " << q << '\n';
-
    vector<string> at;
    vector<string> qr;
 
    at = readnlines(n);
    qr = readnlines(q);
 
-   // for (int i = 0; i < at.size(); i++)
-   // {
-   //    cout << at[i] << '\n';
-   // }
-
    for (int i = 0; i < q; i++)
    {
-      // cout << qr[i] << '\n';
       query_tag(at, qr[i]);
    }
 
